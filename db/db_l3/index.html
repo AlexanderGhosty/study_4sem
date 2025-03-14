@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Пример фронтенда для Go-приложения</title>
+    <!-- Подключаем Chart.js (для наглядной визуализации) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<h1>Пример взаимодействия с REST API (Go + PostgreSQL)</h1>
+
+<!-- Блок для демонстрации авторов -->
+<section>
+    <h2>Авторы</h2>
+    <button onclick="getAuthors()">Получить всех авторов</button>
+    <ul id="authorsList"></ul>
+
+    <h3>Добавить автора</h3>
+    <input id="authorName" type="text" placeholder="Имя автора" />
+    <button onclick="addAuthor()">Добавить</button>
+
+    <h3>Обновить автора</h3>
+    <input id="updateAuthorId" type="number" placeholder="ID автора" />
+    <input id="updateAuthorName" type="text" placeholder="Новое имя" />
+    <button onclick="updateAuthor()">Обновить</button>
+</section>
+
+<!-- Блок для демонстрации категорий -->
+<section>
+    <h2>Категории</h2>
+    <button onclick="getCategories()">Получить все категории</button>
+    <ul id="categoriesList"></ul>
+
+    <h3>Добавить категорию</h3>
+    <input id="categoryName" type="text" placeholder="Название категории" />
+    <button onclick="addCategory()">Добавить</button>
+
+    <h3>Обновить категорию</h3>
+    <input id="updateCategoryId" type="number" placeholder="ID категории" />
+    <input id="updateCategoryName" type="text" placeholder="Новое название" />
+    <button onclick="updateCategory()">Обновить</button>
+</section>
+
+<!-- Блок для демонстрации книг -->
+<section>
+    <h2>Книги</h2>
+    <button onclick="getBooks()">Получить все книги</button>
+    <ul id="booksList"></ul>
+
+    <h3>Добавить книгу</h3>
+    <input id="bookTitle" type="text" placeholder="Название книги" />
+    <input id="bookAuthorId" type="number" placeholder="ID автора" />
+    <input id="bookCategoryId" type="number" placeholder="ID категории" />
+    <button onclick="addBook()">Добавить</button>
+
+    <h3>Обновить книгу</h3>
+    <input id="updateBookId" type="number" placeholder="ID книги" />
+    <input id="updateBookTitle" type="text" placeholder="Новое название" />
+    <input id="updateBookAuthorId" type="number" placeholder="Новый AuthorID" />
+    <input id="updateBookCategoryId" type="number" placeholder="Новый CategoryID" />
+    <button onclick="updateBook()">Обновить</button>
+</section>
+
+<section>
+    <h2>Распределение книг по категориям</h2>
+    <canvas id="booksByCategoryChart" width="400" height="200"></canvas>
+    <button onclick="drawBooksDistribution()">Построить / обновить диаграмму</button>
+</section>
+
+<script>
+    // ===================== AUTHORS =====================
+    function getAuthors() {
+        fetch('/authors')
+            .then(response => response.json())
+            .then(data => {
+                const list = document.getElementById('authorsList');
+                list.innerHTML = ''; // очищаем список перед вставкой
+
+                data.forEach(author => {
+                    const li = document.createElement('li');
+                    li.textContent = `ID: ${author.id}, Name: ${author.name}`;
+                    list.appendChild(li);
+                });
+            })
+            .catch(err => console.error('Ошибка при получении авторов:', err));
+    }
+
+    function addAuthor() {
+        const name = document.getElementById('authorName').value;
+
+        fetch('/authors', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name })
+        })
+            .then(response => response.json())
+            .then(newAuthor => {
+                alert(`Автор добавлен. ID = ${newAuthor.id}, Name = ${newAuthor.name}`);
+                getAuthors(); // Обновляем список, чтобы сразу увидеть результат
+            })
+            .catch(err => console.error('Ошибка при добавлении автора:', err));
+    }
+
+    function updateAuthor() {
+        const id = document.getElementById('updateAuthorId').value;
+        const name = document.getElementById('updateAuthorName').value;
+
+        fetch(`/authors/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name })
+        })
+            .then(response => response.json())
+            .then(updatedAuthor => {
+                alert(`Автор обновлён. ID = ${updatedAuthor.id}, Name = ${updatedAuthor.name}`);
+                getAuthors(); // Обновляем список
+            })
+            .catch(err => console.error('Ошибка при обновлении автора:', err));
+    }
+
+    // ===================== CATEGORIES =====================
+    function getCategories() {
+        fetch('/categories')
+            .then(response => response.json())
+            .then(data => {
+                const list = document.getElementById('categoriesList');
+                list.innerHTML = ''; // очищаем перед вставкой
+
+                data.forEach(category => {
+                    const li = document.createElement('li');
+                    li.textContent = `ID: ${category.id}, Name: ${category.name}`;
+                    list.appendChild(li);
+                });
+            })
+            .catch(err => console.error('Ошибка при получении категорий:', err));
+    }
+
+    function addCategory() {
+        const name = document.getElementById('categoryName').value;
+
+        fetch('/categories', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name })
+        })
+            .then(response => response.json())
+            .then(newCategory => {
+                alert(`Категория добавлена. ID = ${newCategory.id}, Name = ${newCategory.name}`);
+                getCategories(); // Обновляем список
+            })
+            .catch(err => console.error('Ошибка при добавлении категории:', err));
+    }
+
+    function updateCategory() {
+        const id = document.getElementById('updateCategoryId').value;
+        const name = document.getElementById('updateCategoryName').value;
+
+        fetch(`/categories/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name })
+        })
+            .then(response => response.json())
+            .then(updatedCategory => {
+                alert(`Категория обновлена. ID = ${updatedCategory.id}, Name = ${updatedCategory.name}`);
+                getCategories(); // Обновляем список
+            })
+            .catch(err => console.error('Ошибка при обновлении категории:', err));
+    }
+
+    // ===================== BOOKS =====================
+    function getBooks() {
+        fetch('/books')
+            .then(response => response.json())
+            .then(data => {
+                const list = document.getElementById('booksList');
+                list.innerHTML = ''; // очищаем перед вставкой
+
+                data.forEach(book => {
+                    const li = document.createElement('li');
+                    li.textContent = `ID: ${book.id}, Title: ${book.title}, AuthorID: ${book.author_id}, CategoryID: ${book.category_id}`;
+                    list.appendChild(li);
+                });
+            })
+            .catch(err => console.error('Ошибка при получении книг:', err));
+    }
+
+    function addBook() {
+        const title = document.getElementById('bookTitle').value;
+        const authorId = parseInt(document.getElementById('bookAuthorId').value);
+        const categoryId = parseInt(document.getElementById('bookCategoryId').value);
+
+        fetch('/books', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                title,
+                author_id: authorId,
+                category_id: categoryId
+            })
+        })
+            .then(response => response.json())
+            .then(newBook => {
+                alert(`Книга добавлена. ID = ${newBook.id}, Title = ${newBook.title}`);
+                getBooks(); // Обновляем список
+            })
+            .catch(err => console.error('Ошибка при добавлении книги:', err));
+    }
+
+    function updateBook() {
+        const id = parseInt(document.getElementById('updateBookId').value);
+        const title = document.getElementById('updateBookTitle').value;
+        const authorId = parseInt(document.getElementById('updateBookAuthorId').value);
+        const categoryId = parseInt(document.getElementById('updateBookCategoryId').value);
+
+        fetch(`/books/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                title,
+                author_id: authorId,
+                category_id: categoryId
+            })
+        })
+            .then(response => response.json())
+            .then(updatedBook => {
+                alert(`Книга обновлена. ID = ${updatedBook.id}, Title = ${updatedBook.title}`);
+                getBooks(); // Обновляем список
+            })
+            .catch(err => console.error('Ошибка при обновлении книги:', err));
+    }
+
+    // ===================== ВИЗУАЛИЗАЦИЯ (пример) =====================
+    let chartInstance = null;
+
+    function drawBooksDistribution() {
+        fetch('/books')
+            .then(response => response.json())
+            .then(books => {
+                // Сгруппируем книги по ID категории
+                const categoryCount = {};
+                books.forEach(book => {
+                    const catId = book.category_id;
+                    categoryCount[catId] = (categoryCount[catId] || 0) + 1;
+                });
+
+                // Подготовим данные для Chart.js
+                const labels = Object.keys(categoryCount).map(id => 'Категория ' + id);
+                const data = Object.values(categoryCount);
+
+                // Уничтожим предыдущий график, если он был, чтобы не наложились
+                if (chartInstance) {
+                    chartInstance.destroy();
+                }
+
+                // Строим диаграмму
+                const ctx = document.getElementById('booksByCategoryChart').getContext('2d');
+                chartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Кол-во книг в каждой категории',
+                            data: data
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(err => console.error('Ошибка при построении графика:', err));
+    }
+</script>
+</body>
+</html>
