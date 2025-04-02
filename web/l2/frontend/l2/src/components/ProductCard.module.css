@@ -1,0 +1,38 @@
+/* src/components/ProductCard.module.css */
+.card {
+  border: 1px solid #f0f0f0;  
+  transition: transform 0.2s ease-in-out;
+  border-radius: 0.25rem; 
+}
+
+.card:hover {
+  transform: scale(1.01);
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cardTitle {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 0.8rem;
+  color: #007bff; 
+}
+
+.btnBuy {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s ease;
+}
+
+.btnBuy:hover {
+  background-color: #218838;
+}

@@ -5,12 +5,11 @@ import ProductList from './components/ProductList';
 function App() {
   const [products, setProducts] = useState([]);
 
-  // useEffect для загрузки данных при монтировании компонента
   useEffect(() => {
     fetch('http://localhost:8080/products')
       .then(response => response.json())
       .then(data => {
-        setProducts(data); // сохраняем полученные данные в стейт
+        setProducts(data); 
       })
       .catch(error => {
         console.error('Ошибка при загрузке:', error);
