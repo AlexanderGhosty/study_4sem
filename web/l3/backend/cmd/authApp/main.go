@@ -6,6 +6,7 @@ import (
 
 	"backend/internal/database"
 	"backend/internal/handlers"
+	"backend/internal/middleware"
 )
 
 func main() {
@@ -16,11 +17,14 @@ func main() {
 	}
 	log.Println("Connected to database")
 
-	http.HandleFunc("/register", handlers.RegisterHandler(db))
-	http.HandleFunc("/login", handlers.LoginHandler(db))
+	mux := http.NewServeMux()
+	mux.HandleFunc("/register", handlers.RegisterHandler(db))
+	mux.HandleFunc("/login", handlers.LoginHandler(db))
+
+	handlerWithCORS := middleware.CORSMiddleware(mux)
 
 	log.Println("Listening on port 8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	if err := http.ListenAndServe(":8080", handlerWithCORS); err != nil {
 		log.Fatal("Server failed to start:", err)
 	}
 }
