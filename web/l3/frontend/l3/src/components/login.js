@@ -7,9 +7,7 @@ function Login() {
   const navigate = useNavigate();
 
   const handleLogin = async (event) => {
-    event.preventDefault(); // отменяем перезагрузку формы
-    
-    // Формируем запрос к /login
+    event.preventDefault();
     try {
       const response = await fetch("http://localhost:8080/login", {
         method: "POST",
@@ -21,12 +19,9 @@ function Login() {
       if (response.ok) {
         const data = await response.json();
         const token = data.token;
-        // Сохраняем токен в localStorage
         localStorage.setItem('token', token);
-        // Перенаправляем пользователя на защищенную страницу (например, Dashboard)
         navigate('/dashboard'); 
       } else {
-        // Неверные данные или ошибка – можно показать сообщение
         alert("Ошибка входа: " + response.statusText);
       }
     } catch (err) {
@@ -36,29 +31,39 @@ function Login() {
   };
 
   return (
-    <div className="login-page">
-      <h2>Вход</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>Email:</label><br />
-          <input 
-            type="email" 
-            value={email} 
-            onChange={e => setEmail(e.target.value)} 
-            required 
-          />
+    <div className="container mt-5">
+      <div className="row justify-content-center">
+        <div className="col-md-6">
+          <div className="card shadow">
+            <div className="card-body">
+              <h2 className="card-title text-center mb-4">Вход</h2>
+              <form onSubmit={handleLogin}>
+                <div className="mb-3">
+                  <label className="form-label">Email:</label>
+                  <input 
+                    type="email" 
+                    className="form-control" 
+                    value={email} 
+                    onChange={e => setEmail(e.target.value)} 
+                    required 
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Пароль:</label>
+                  <input 
+                    type="password" 
+                    className="form-control" 
+                    value={password} 
+                    onChange={e => setPassword(e.target.value)} 
+                    required 
+                  />
+                </div>
+                <button type="submit" className="btn btn-primary w-100">Войти</button>
+              </form>
+            </div>
+          </div>
         </div>
-        <div>
-          <label>Пароль:</label><br />
-          <input 
-            type="password" 
-            value={password} 
-            onChange={e => setPassword(e.target.value)} 
-            required 
-          />
-        </div>
-        <button type="submit">Войти</button>
-      </form>
+      </div>
     </div>
   );
 }
