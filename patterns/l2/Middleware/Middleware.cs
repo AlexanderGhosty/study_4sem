@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace l2.Middleware
+﻿namespace l2.Middleware
 {
     // Базовый класс Middleware, реализующий логику "передать следующему"
     public abstract class Middleware : IMiddleware

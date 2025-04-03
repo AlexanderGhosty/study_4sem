@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace l2.Middleware
+﻿namespace l2.Middleware
 {
-    // Middleware для трансформации данных (например, приведение строки к верхнему регистру)
+    // Middleware для трансформации данных 
     public class TransformationMiddleware : Middleware
     {
         public override void Handle(Models.DataContext context)
