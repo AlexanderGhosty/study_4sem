@@ -14,25 +14,19 @@ namespace l3
             // Создаем прокси, передавая туда реальный репозиторий
             IDataRepository proxy = new DataProxy(repo);
 
-            // Первый запрос
-            Console.WriteLine("Запрашиваем key1 первый раз...");
-            Console.WriteLine(proxy.GetData("key1"));
-            Console.WriteLine();
+            while (true)
+            {
+                // Запрашиваем ключ у пользователя
+                Console.Write("Введите ключ (или оставьте пустым для выхода): ");
+                string key = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(key))
+                    break;
 
-            // Второй запрос (ожидается, что данные будут из кэша)
-            Console.WriteLine("Запрашиваем key1 второй раз (должно взяться из кэша)...");
-            Console.WriteLine(proxy.GetData("key1"));
-            Console.WriteLine();
-
-            // Ожидание для истечения срока действия кэша (10 секунд + небольшой запас)
-            Console.WriteLine("Ждем 12 секунд, чтобы кэш протух...");
-            Thread.Sleep(12000);
-
-            // Третий запрос – кэш уже истек, будет вызов реального репозитория
-            Console.WriteLine("Снова запрашиваем key1 (должен опять обратиться к репозиторию)...");
-            Console.WriteLine(proxy.GetData("key1"));
-            Console.WriteLine("Нажмите любую клавишу для выхода...");
-            Console.ReadKey();
+                // Первый запрос
+                Console.WriteLine($"Запрашиваем {key} ...");
+                Console.WriteLine(proxy.GetData(key));
+                Console.WriteLine();
+            }
         }
     }
 }

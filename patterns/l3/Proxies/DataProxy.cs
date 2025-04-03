@@ -18,7 +18,7 @@ namespace l3.Proxies
             // Данные будут истекать через 10 секунд
             _policy = new CacheItemPolicy
             {
-                AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(10)
+                SlidingExpiration = TimeSpan.FromSeconds(10)
             };
         }
 
