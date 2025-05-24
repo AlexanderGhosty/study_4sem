@@ -9,9 +9,7 @@ public class FPlugB : Factory
     public override IPlugin Create()
     {
         IPlugin plugin = LoadPlugin(path);
-        // ...
         Console.WriteLine("Do some business logic with plugin B");
-        // ...
         return plugin;
     }
 }

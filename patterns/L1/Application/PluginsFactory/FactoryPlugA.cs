@@ -1,15 +1,17 @@
-﻿using Patterns.PluginsFactory;
+using Patterns.PluginsFactory;
 
 namespace Application.PluginsFactory;
 
-public class FPlugA : Factory
+public class FactoryPlugA : Factory
 {
-    public FPlugA(string path) : base(path) { }
+    public FactoryPlugA(string path) : base(path) { }
 
     public override IPlugin Create()
     {
         IPlugin plugin = LoadPlugin(path);
+        // ...
         Console.WriteLine("Do some business logic with plugin A");
+        // ...
         return plugin;
     }
 }
